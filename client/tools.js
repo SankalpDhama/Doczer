@@ -37,14 +37,16 @@ for (let i = 0; i < toolsArr.length; i++) {
     if (toolName == "pencil") {
       currentTool = "pencil";
       tool.strokeStyle = "black";
+      tool.lineWidth = 1;
       console.log("pencil");
     } else if (toolName == "eraser") {
       currentTool = "eraser";
       tool.strokeStyle = "white";
-      tool.lineWidth = 10;
+      tool.lineWidth = 20;
       console.log("Eraser");
     } else if (toolName == "sticky") {
       console.log("sticky");
+      createSticky();
     } else if (toolName == "upload") {
       console.log("upload");
     } else if (toolName == "download") {
@@ -85,4 +87,61 @@ canvas.addEventListener("mouseup", function (e) {
 function getYDelta() {
   let heightofToolbar = toolBar.getBoundingClientRect().height;
   return heightofToolbar;
+}
+
+function createSticky() {
+  console.log("bbheehs");
+  let stickyDiv = document.createElement("div");
+  let navDiv = document.createElement("div");
+  let closeDiv = document.createElement("div");
+  let minimizeDiv = document.createElement("div");
+  let textArea = document.createElement("textarea");
+  stickyDiv.setAttribute("class", "sticky");
+  navDiv.setAttribute("class", "nav");
+  textArea.setAttribute("class", "text-area");
+  //add text
+  closeDiv.innerText = "X";
+  minimizeDiv.innerText = "min";
+  //add structure
+  navDiv.appendChild(minimizeDiv);
+  navDiv.appendChild(closeDiv);
+  stickyDiv.appendChild(navDiv);
+  stickyDiv.appendChild(textArea);
+  document.body.appendChild(stickyDiv);
+  let isMin = false;
+  closeDiv.addEventListener("click", function () {
+    stickyDiv.remove();
+  });
+  minimizeDiv.addEventListener("click", function () {
+    textArea.style.display = isMin ? "block" : "none";
+    isMin = !isMin;
+  });
+  let isMov = false;
+  let iX;
+  let iY;
+  navDiv.addEventListener("mousedown", function (e) {
+    iX = e.clientX;
+    iY = e.clientY;
+    console.log(iX, "x axis", iY, " y axis", " mousedown");
+    isMov = true;
+  });
+  navDiv.addEventListener("mousemove", function (e) {
+    if (isMov) {
+      let fX = e.clientX;
+      let fY = e.clientY;
+      console.log("final value", fX, " ", fY);
+      let dX = fX - iX;
+      let dY = fY - iY;
+      console.log("reduced value", dX, " ", dY);
+      let { top, left } = stickyDiv.getBoundingClientRect();
+      stickyDiv.style.top = top + dX + "px";
+      stickyDiv.style.left = left + dY + "px";
+      iX = fX;
+      iY = fY;
+    }
+  });
+  navDiv.addEventListener("mouseup", function (e) {
+    console.log("mouse up");
+    isMov = false;
+  });
 }
